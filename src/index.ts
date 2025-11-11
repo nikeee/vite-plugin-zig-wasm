@@ -1,6 +1,7 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
-import type { Plugin } from "rolldown";
+
+import type { Plugin } from "vite";
 import { sync as spawnSync } from "cross-spawn";
 import which from "which";
 import {
@@ -87,15 +88,18 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
           resolvedCacheDir,
           `wasm-optimized.${uniqWasmName}`
         );
+
         const args = ["-o", optimizedFile];
         const extraArgs = Array.isArray(optimize)
           ? optimize
           : ["-Oz", "--strip-debug"];
+
         const result = spawnSync(
           wasmOptPath!,
           [wasmPath, ...args, ...extraArgs],
           { stdio: "inherit" }
         );
+
         if (result.error) throw result.error;
         await fs.rename(optimizedFile, wasmPath);
       }
