@@ -32,11 +32,13 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   if (versionCmd.error) {
     throw new Error(`failed when execute "${zigBinPath} version" command.`);
   }
+
   const version = versionCmd.stdout.toString();
 
   const wasmOptPath = optimize
     ? which.sync("wasm-opt", { nothrow: true })
     : false;
+
   if (wasmOptPath === null) {
     throw new Error(
       "Can't enable wasm optimize option, wasm-opt command not found. Make sure `wasm-opt` in your $PATH.",
