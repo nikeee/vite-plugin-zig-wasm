@@ -46,7 +46,14 @@ function getMcpuOption(options: Partial<CpuOptions>): string | undefined {
 }
 
 export default function zigWasmPlugin(options: Options = {}): Plugin {
-  const { cacheDir, zig = {}, optimize = false, cpu: cpuOptions } = options;
+  const {
+    cacheDir,
+    zig = {},
+    optimize = false,
+    cpu: cpuOptions,
+    memory: memoryOptions = {},
+  } = options;
+
   const {
     releaseMode = "small",
     strip = false,
@@ -99,18 +106,30 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         "-fno-entry",
         "-rdynamic",
         cpu ? `-mcpu=${cpu}` : undefined,
+
+        memoryOptions.importMemory ? "--import-memory" : undefined,
+
+        memoryOptions.globalBase
+          ? `--global-base=${memoryOptions.globalBase}`
+          : undefined,
+        memoryOptions.initialMemory
+          ? `--initial-memory=${memoryOptions.initialMemory}`
+          : undefined,
+        memoryOptions.maxMemory
+          ? `--max-memory=${memoryOptions.maxMemory}`
+          : undefined,
+
         `-femit-bin=${wasmPath}`,
         `-Drelease-${releaseMode}`,
-        `--cache-dir`,
-        resolvedZigCacheDir,
+        `--cache-dir=${resolvedZigCacheDir}`,
         strip ? "--strip" : undefined,
-        ...(extraArgs.length > 0 ? extraArgs : []),
+        ...extraArgs,
         filePath,
       ];
 
       const result = spawnSync(
         zigBinPath,
-        args.filter(a => typeof a !== "undefined"),
+        args.filter(a => typeof a !== "undefined").filter(a => !!a),
         { stdio: "inherit" },
       );
 

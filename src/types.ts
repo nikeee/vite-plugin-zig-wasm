@@ -10,13 +10,15 @@ export type Options = {
    */
   optimize?: boolean | string[];
 
+  /**
+   * CPU capabilities.
+   */
   cpu?: Partial<CpuOptions>;
 
   /**
-   * `--import-memory` option
-   * @default true
+   * Fine-grained control about memory layout that zig assumes.
    */
-  importMemory?: boolean;
+  memory?: Partial<MemoryOptions>;
 
   /**
    * Effected zig build command
@@ -59,4 +61,27 @@ export type CpuOptions = {
    * @default true
    */
   bulkMemory: boolean;
+};
+
+export type MemoryOptions = {
+  /**
+   * `--import-memory` option
+   * @default true
+   */
+  importMemory: boolean;
+  /**
+   * `--initial-memory`
+   * @default undefined
+   */
+  initialMemory: number;
+  /**
+   * `--max-memory`
+   * @default undefined
+   */
+  maxMemory: number;
+  /**
+   * `--global-base`
+   * @default undefined
+   */
+  globalBase: number;
 };
