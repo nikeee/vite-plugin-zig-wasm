@@ -34,8 +34,10 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   }
   const version = versionCmd.stdout.toString();
 
-  const wasmOptPath = which.sync("wasm-opt", { nothrow: true });
-  if (optimize && !wasmOptPath) {
+  const wasmOptPath = optimize
+    ? which.sync("wasm-opt", { nothrow: true })
+    : false;
+  if (wasmOptPath === null) {
     throw new Error(
       "Can't enable wasm optimize option, wasm-opt command not found. Make sure `wasm-opt` in your $PATH.",
     );
@@ -83,7 +85,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         throw result.error;
       }
 
-      if (optimize) {
+      if (wasmOptPath) {
         const optimizedFile = path.join(
           resolvedCacheDir,
           `wasm-optimized.${uniqWasmName}`,
@@ -95,7 +97,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
           : ["-Oz", "--strip-debug"];
 
         const result = spawnSync(
-          wasmOptPath!,
+          wasmOptPath,
           [wasmPath, ...args, ...extraArgs],
           { stdio: "inherit" },
         );
