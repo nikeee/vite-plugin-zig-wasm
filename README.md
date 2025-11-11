@@ -10,10 +10,10 @@ Fork of [utherpally/vite-wasm-zig](https://github.com/utherpally/vite-wasm-zig).
 ## Install
 ```sh
 npm i -D vite-plugin-zig-wasm
+npm i -D @ziglang/cli # add a zig compiler for CI environments
 ```
 
 ## Usage
-
 ```js
 // vite.config.{js, ts}
 import zig from 'vite-plugin-zig-wasm';
@@ -62,6 +62,8 @@ export default instance.exports;
 Add to `tsconfig.json`:
 ```json
 {
-  "types": ["vite/client", "vite-plugin-zig-wasm/client"]
+  "compilerOptions": {
+    "types": ["vite/client", "vite-plugin-zig-wasm/client"]
+  }
 }
 ```
