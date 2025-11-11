@@ -5,12 +5,11 @@
 </p>
 
 # vite-plugin-zig-wasm
+Fork of [utherpally/vite-wasm-zig](https://github.com/utherpally/vite-wasm-zig).
 
 ## Install
-
-
-```
-yarn add -D vite-plugin-zig-wasm
+```sh
+npm i -D vite-plugin-zig-wasm
 ```
 
 ## Usage
@@ -32,9 +31,8 @@ export default defineConfig(({ mode }) => {
 }
 ```
 
-```js
+```zig
 // main.zig
-
 export fn add(a: i32, b: i32) i32 {
     return a + b;
 }
@@ -61,19 +59,9 @@ export default instance.exports;
 ```
 
 ## With Typescript
-
 Add to `tsconfig.json`:
-
 ```json
 {
   "types": ["vite/client", "vite-plugin-zig-wasm/client"]
 }
 ```
-
-## Semver
-
-Until 1.0 release, this package don't follow Semver for versioning
-
-## Lisence
-
-MIT
