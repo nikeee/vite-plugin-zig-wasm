@@ -1,8 +1,7 @@
-import type { Plugin, ResolvedConfig } from "vite";
+import type { Plugin } from "vite";
 
 import { sync as spawnSync } from "cross-spawn";
 import * as path from "node:path";
-import * as os from "node:os";
 import * as fs from "node:fs/promises";
 import which from "which";
 import {
