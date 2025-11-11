@@ -4,7 +4,7 @@ export type Options = {
    */
   cacheDir?: string | false;
   /**
-   * Enable optimize after building .wasm file from zig file.
+   * Enable optimize after building .wasm file using `wasm-opt`.
    *
    * Default run with ["-Oz", "--strig-debug"]
    */
@@ -24,7 +24,7 @@ export type Options = {
    * Effected zig build command
    */
   zig?: {
-    releaseMode?: "safe" | "small" | "fast";
+    releaseMode?: "ReleaseSmall" | "ReleaseFast" | "Debug";
     strip?: boolean;
     binPath?: string;
     cacheDir?: string;

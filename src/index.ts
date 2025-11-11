@@ -55,7 +55,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   } = options;
 
   const {
-    releaseMode = "small",
+    releaseMode = "ReleaseFast",
     strip = false,
     extraArgs = [],
     binPath,
@@ -100,11 +100,12 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
       const cpu = getMcpuOption(cpuOptions ?? {});
 
       const args = [
-        "build-lib",
+        "build-exe",
         "-target",
         "wasm32-freestanding",
         "-fno-entry",
         "-rdynamic",
+
         cpu ? `-mcpu=${cpu}` : undefined,
 
         memoryOptions.importMemory ? "--import-memory" : undefined,
@@ -120,7 +121,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
           : undefined,
 
         `-femit-bin=${wasmPath}`,
-        `-Drelease-${releaseMode}`,
+        `-O=${releaseMode}`,
         `--cache-dir=${resolvedZigCacheDir}`,
         strip ? "--strip" : undefined,
         ...extraArgs,
