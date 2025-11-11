@@ -128,11 +128,13 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         filePath,
       ];
 
-      const result = spawnSync(
-        zigBinPath,
-        args.filter(a => typeof a !== "undefined").filter(a => !!a),
-        { stdio: "inherit" },
-      );
+      const effectiveArgs = args
+        .filter(a => typeof a !== "undefined")
+        .filter(a => !!a);
+
+      this.info(`Building zig file: ${effectiveArgs.join(" ")}`);
+
+      const result = spawnSync(zigBinPath, effectiveArgs, { stdio: "inherit" });
 
       if (result.error) {
         throw result.error;
