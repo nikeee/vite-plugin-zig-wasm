@@ -4,3 +4,9 @@ declare module "*.zig?init" {
   ) => Promise<WebAssembly.Instance>;
   export default instantiate;
 }
+declare module "*.zig?compile" {
+  export const compileModule: (
+    options: WebAssembly.Imports
+  ) => ReturnType<typeof WebAssembly.compile>;
+  export default compileModule;
+}

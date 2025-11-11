@@ -15,7 +15,8 @@ import {
 
 import type { CpuOptions, Options } from "./types.ts";
 
-const ID_SUFFIX = ".zig?init";
+const compileSuffix = ".zig?compile";
+const instanciateSuffix = ".zig?init";
 
 function getMcpuOption(options: Partial<CpuOptions>): string | undefined {
   const {
@@ -87,9 +88,11 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   return {
     name: "vite-plugin-zig-wasm",
     async transform(_code, id, options) {
-      if (!id.endsWith(ID_SUFFIX)) {
+      if (!id.endsWith(compileSuffix) && !id.endsWith(instanciateSuffix)) {
         return;
       }
+
+      const useInternalInstance = id.endsWith(instanciateSuffix);
 
       const filePath = fsPathFromUrl(id);
 
@@ -163,19 +166,38 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         await fs.rename(optimizedFile, wasmPath);
       }
 
+      if (useInternalInstance) {
+        return {
+          code: options?.ssr
+            ? `
+import * as fs from "node:fs/promises";
+
+export default async function init(instantiateOptions) {
+  const bytes = await fs.readFile('${normalizePath(wasmPath)}');
+  const result = await WebAssembly.instantiate(bytes, instantiateOptions);
+  return result.instance;
+}`
+            : `
+import init from '${normalizePath(wasmPath)}?init';
+export default init;`,
+          map: { mappings: "" },
+        };
+      }
+
       return {
         code: options?.ssr
           ? `
 import * as fs from "node:fs/promises";
 
-export default async function init(opts) {
-  const bytes = await fs.readFile('${normalizePath(wasmPath)}');
-  const result = await WebAssembly.instantiate(bytes, opts);
-  return result.instance;
+export default async function compileModule() {
+  const bytes = await fs.readFile("${normalizePath(wasmPath)}");
+  return await WebAssembly.compile(bytes);
 }`
           : `
-import init from '${normalizePath(wasmPath)}?init';
-export default init;`,
+import moduleUrl from "${normalizePath(wasmPath)}?url";
+export default async function compileModule() {
+  return await WebAssembly.compileStreaming(fetch(moduleUrl));
+}`,
         map: { mappings: "" },
       };
     },

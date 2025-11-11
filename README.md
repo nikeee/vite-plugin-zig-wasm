@@ -7,6 +7,11 @@
 # vite-plugin-zig-wasm
 Fork of [utherpally/vite-wasm-zig](https://github.com/utherpally/vite-wasm-zig).
 
+Why use this instead of one of the other solutions?
+- More compiler options
+- Compatible with latest Zig version
+- Exposes a `WebAssembly.Module` instead of `WebAssembly.Instance`, so it's easier to create multiple instances and have more control over _when_ an instance is created.
+
 ## Install
 ```sh
 npm i -D vite-plugin-zig-wasm
@@ -37,26 +42,39 @@ export fn add(a: i32, b: i32) i32 {
     return a + b;
 }
 ```
-
+### Compiled `WebAsembly.Module`
 ```js
 // index.{js,ts}
-import init from "./main.zig?init";
+import compileModule from "./main.zig?compile";
 
-function someFunc() {
-  const importObject = {
-    /* ... */
-  };
+const module = await compileModule();
 
-  init(importObject).then((instance) => {
-    console.log(instance.exports.add(1, 10));
-  });
-}
-// OR
-// This plugin support SSR, so top level await is OK
-const instance = await init(importObject)
+const importObject = {
+  /* ... */
+};
+
+const instance = await WebAssembly.instantiate(module, importObject);
+
 console.log(instance.exports.add(1, 10));
 export default instance.exports;
 ```
+
+### Compiled `WebAssembly.Instance`
+```js
+// index.{js,ts}
+import createInstance from "./main.zig?init";
+
+const importObject = {
+  /* ... */
+};
+
+const instance = await createInstance(importObject);
+
+console.log(instance.exports.add(1, 10));
+export default instance.exports;
+```
+
+
 
 ## With Typescript
 Add to `tsconfig.json`:
