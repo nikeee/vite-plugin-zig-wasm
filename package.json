@@ -31,6 +31,7 @@
     "test": "node --test",
     "coverage": "node --test --experimental-test-coverage",
     "ci": "biome ci ./src",
+    "docs": "typedoc",
     "lint": "biome lint ./src",
     "format": "biome check --write ./src",
     "prepublishOnly": "npm run build"
