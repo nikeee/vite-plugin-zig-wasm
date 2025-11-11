@@ -27,6 +27,8 @@ jobs:
 
       - run: npm ci
       - run: npm run ci
+      - run: npm ci && npm run build
+        working-directory: examples/zig-wasm-demo
 
       # TODO
       # - run: npm test --silent | tee results.tap
