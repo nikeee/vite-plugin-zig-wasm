@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  NODE_OPTIONS: --test-reporter=tap
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x, 24.x, 25.x]
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run ci
+
+      # TODO
+      # - run: npm test --silent | tee results.tap
+      #   shell: bash -euo pipefail {0}
+
+      - uses: nikeee/tap-summary@dist
+        continue-on-error: true
+        if: always()
+
+  docs-build:
+    if: ${{ github.event_name != 'pull_request' }}
+    name: Build Docs
+    runs-on: ubuntu-latest
+
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run docs
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./docs
