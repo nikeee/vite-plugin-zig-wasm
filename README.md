@@ -1,7 +1,7 @@
 <p>
   <a href="https://npmjs.com/package/vite-plugin-zig-wasm"><img src="https://img.shields.io/npm/v/vite-plugin-zig-wasm.svg" alt="npm package"></a>
-  <a href="https://ziglang.org/"><img src="https://img.shields.io/badge/zig-%3E%3D%200.9.0-yellow?logo=zig" alt="zig language"></a>
-  <a href="https://ziglang.org/"><img src="https://img.shields.io/badge/vite-%5E3.0.0-blue?logo=vite&&labelColor=ffffff" alt="zig language"></a>
+  <a href="https://ziglang.org/"><img src="https://img.shields.io/badge/zig-%3E%3D%200.15.0-yellow?logo=zig" alt="zig language"></a>
+  <a href="https://ziglang.org/"><img src="https://img.shields.io/badge/vite-%5E7.2.2-blue?logo=vite&&labelColor=ffffff" alt="zig language"></a>
 </p>
 
 # vite-plugin-zig-wasm
