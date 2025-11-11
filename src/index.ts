@@ -1,8 +1,7 @@
-import type { Plugin } from "vite";
-
-import { sync as spawnSync } from "cross-spawn";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
+import type { Plugin } from "rolldown";
+import { sync as spawnSync } from "cross-spawn";
 import which from "which";
 import {
   fsPathFromUrl,
@@ -44,8 +43,6 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
 
   ensureZigVersion(version, ">= 0.9.0");
 
-  const zigSelfHosted = atLeastZigVersion(version, "0.10.0");
-
   let resolvedCacheDir: string;
   let resolvedZigCacheDir: string;
   return {
@@ -73,7 +70,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
       ];
 
       if (strip) {
-        args.push(zigSelfHosted ? "-dead_strip" : "--strip");
+        args.push("--strip");
       }
 
       if (extraArgs.length) {
