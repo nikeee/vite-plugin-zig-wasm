@@ -17,7 +17,7 @@ import type { CpuOptions, Options } from "./types.ts";
 
 const ID_SUFFIX = ".zig?init";
 
-function getMcpuOption(options: Partial<CpuOptions>): string {
+function getMcpuOption(options: Partial<CpuOptions>): string | undefined {
   const {
     baseline = true,
     bulkMemory = true,
@@ -42,7 +42,7 @@ function getMcpuOption(options: Partial<CpuOptions>): string {
   if (bulkMemory) {
     o.push("bulk_memory");
   }
-  return o.join("+");
+  return o.length === 0 ? undefined : o.join("+");
 }
 
 export default function zigWasmPlugin(options: Options = {}): Plugin {
@@ -90,29 +90,30 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
       const uniqWasmName = `${path.basename(filePath, ".zig")}.${hash}.wasm`;
       const wasmPath = path.join(resolvedCacheDir, uniqWasmName);
 
+      const cpu = getMcpuOption(cpuOptions ?? {});
+
       const args = [
         "build-lib",
         "-target",
         "wasm32-freestanding",
         "-fno-entry",
         "-rdynamic",
-        `-mcpu=${getMcpuOption(cpuOptions ?? {})}`, // TODO: Handle empty options
+        cpu ? `-mcpu=${cpu}` : undefined,
         `-femit-bin=${wasmPath}`,
         `-Drelease-${releaseMode}`,
         `--cache-dir`,
         resolvedZigCacheDir,
+        strip ? "--strip" : undefined,
+        ...(extraArgs.length > 0 ? extraArgs : []),
+        filePath,
       ];
 
-      if (strip) {
-        args.push("--strip");
-      }
+      const result = spawnSync(
+        zigBinPath,
+        args.filter(a => typeof a !== "undefined"),
+        { stdio: "inherit" },
+      );
 
-      if (extraArgs.length) {
-        args.push.apply(args, extraArgs);
-      }
-
-      args.push(filePath);
-      const result = spawnSync(zigBinPath, args, { stdio: "inherit" });
       if (result.error) {
         throw result.error;
       }
