@@ -1,22 +1,18 @@
 {
-  "name": "vite-wasm-zig",
-  "version": "0.1.1",
+  "name": "vite-plugin-zig-wasm",
+  "author": "Niklas Mollenhauer",
+  "version": "0.1.0",
   "description": "",
   "keywords": [
     "vite-plugin",
     "wasm",
     "zig"
   ],
-  "author": "langbamit",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/langbamit/vite-wasm-zig.git"
+    "url": "https://github.com/nikeee/vite-plugin-zig-wasm"
   },
-  "bugs": {
-    "url": "https://github.com/langbamit/vite-wasm-zig/issues"
-  },
-  "homepage": "https://github.com/langbamit/vite-wasm-zig/tree/main/#readme",
   "scripts": {
     "dev": "unbuild --stub",
     "build": "unbuild",

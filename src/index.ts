@@ -48,7 +48,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   let resolvedCacheDir: string;
   let resolvedZigCacheDir: string;
   return {
-    name: "vite-wasm-zig",
+    name: "vite-plugin-zig-wasm",
     async transform(code, id, options) {
       if (id.endsWith(ID_SUFFIX)) {
         const filePath = fsPathFromUrl(id);
@@ -116,8 +116,8 @@ export default init;`,
       resolvedCacheDir = cacheDir
         ? path.resolve(config.root, cacheDir)
         : pkgPath
-        ? path.join(path.dirname(pkgPath), "node_modules/.vite-wasm-zig")
-        : path.join(config.root, ".vite-wasm-zig");
+        ? path.join(path.dirname(pkgPath), "node_modules/.vite-plugin-zig-wasm")
+        : path.join(config.root, ".vite-plugin-zig-wasm");
 
       resolvedZigCacheDir = zigCacheDir
         ? path.join(config.root, zigCacheDir)
