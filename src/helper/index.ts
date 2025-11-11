@@ -27,11 +27,6 @@ export const ensureZigVersion = (zigVersion: string, range: string) => {
   }
 };
 
-export const atLeastZigVersion = (zigVersion: string, minVersion: string) => {
-  const version = cleanVersion(zigVersion);
-  return semver.satisfies(version, `>=${minVersion}`);
-};
-
 export const lookupFile = (
   dir: string,
   files: string[]

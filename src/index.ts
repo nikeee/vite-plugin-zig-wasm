@@ -9,7 +9,6 @@ import {
   getHash,
   normalizePath,
   ensureZigVersion,
-  atLeastZigVersion,
   lookupFile,
 } from "./helper/index.ts";
 
