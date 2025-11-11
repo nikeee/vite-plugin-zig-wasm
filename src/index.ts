@@ -19,7 +19,7 @@ import type { Options } from "./types.ts";
 const ID_SUFFIX = ".zig?init";
 
 export default function zigWasmPlugin(options: Options = {}): Plugin {
-  let { cacheDir, zig = {}, optimize = false } = options;
+  const { cacheDir, zig = {}, optimize = false } = options;
   const {
     releaseMode = "small",
     strip = false,
@@ -50,7 +50,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   let resolvedZigCacheDir: string;
   return {
     name: "vite-plugin-zig-wasm",
-    async transform(code, id, options) {
+    async transform(_code, id, options) {
       if (id.endsWith(ID_SUFFIX)) {
         const filePath = fsPathFromUrl(id);
 

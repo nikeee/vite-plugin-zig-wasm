@@ -43,7 +43,7 @@ export const lookupFile = (
     }
   }
   const parentDir = dirname(dir);
-  if (parentDir != dir) {
+  if (parentDir !== dir) {
     return lookupFile(parentDir, files);
   }
 };
