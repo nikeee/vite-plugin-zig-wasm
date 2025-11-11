@@ -10,6 +10,7 @@ Fork of [utherpally/vite-wasm-zig](https://github.com/utherpally/vite-wasm-zig).
 Why use this instead of one of the other solutions?
 - More compiler options
 - Compatible with latest Zig version
+- Uses SIMD128 instruction set by default
 - Exposes a `WebAssembly.Module` instead of `WebAssembly.Instance`, so it's easier to create multiple instances and have more control over _when_ an instance is created.
 
 ## Install
