@@ -137,7 +137,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         .filter(a => typeof a !== "undefined")
         .filter(a => !!a);
 
-      this.info(`Building zig (using v${version}): ${effectiveArgs.join(" ")}`);
+      this.debug(`Building zig (using v${version}): ${effectiveArgs.join(" ")}`);
 
       const result = spawnSync(zigBinPath, effectiveArgs, { stdio: "inherit" });
 
