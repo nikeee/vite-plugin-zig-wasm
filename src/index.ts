@@ -80,6 +80,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
     );
   }
 
+
   ensureZigVersion(version, ">= 0.9.0");
 
   let resolvedCacheDir: string;
@@ -132,7 +133,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         .filter(a => typeof a !== "undefined")
         .filter(a => !!a);
 
-      this.info(`Building zig file: ${effectiveArgs.join(" ")}`);
+      this.info(`Building zig (using v${version}): ${effectiveArgs.join(" ")}`);
 
       const result = spawnSync(zigBinPath, effectiveArgs, { stdio: "inherit" });
 
