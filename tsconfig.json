@@ -14,8 +14,6 @@
     "rewriteRelativeImportExtensions": true,
     "noImplicitOverride": true,
 
-    "allowJs": true,
-    "checkJs": false, // tsgo checks node_modules dependencies otherwise. See: https://github.com/microsoft/typescript-go/issues/931
     "strict": true,
     "noEmit": true
   },
