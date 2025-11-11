@@ -22,14 +22,14 @@ export const ensureZigVersion = (zigVersion: string, range: string) => {
   const version = cleanVersion(zigVersion);
   if (!semver.satisfies(version, range)) {
     throw new Error(
-      `Require zig version ${range} but current installed version is ${version}`
+      `Require zig version ${range} but current installed version is ${version}`,
     );
   }
 };
 
 export const lookupFile = (
   dir: string,
-  files: string[]
+  files: string[],
 ): string | undefined => {
   for (const file of files) {
     const fullPath = join(dir, file);

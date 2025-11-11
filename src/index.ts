@@ -37,7 +37,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   const wasmOptPath = which.sync("wasm-opt", { nothrow: true });
   if (optimize && !wasmOptPath) {
     throw new Error(
-      "Can't enable wasm optimize option, wasm-opt command not found. Make sure `wasm-opt` in your $PATH."
+      "Can't enable wasm optimize option, wasm-opt command not found. Make sure `wasm-opt` in your $PATH.",
     );
   }
 
@@ -86,7 +86,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
       if (optimize) {
         const optimizedFile = path.join(
           resolvedCacheDir,
-          `wasm-optimized.${uniqWasmName}`
+          `wasm-optimized.${uniqWasmName}`,
         );
 
         const args = ["-o", optimizedFile];
@@ -97,7 +97,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         const result = spawnSync(
           wasmOptPath!,
           [wasmPath, ...args, ...extraArgs],
-          { stdio: "inherit" }
+          { stdio: "inherit" },
         );
 
         if (result.error) throw result.error;
@@ -121,12 +121,15 @@ export default init;`,
       };
     },
 
-    configResolved: async (config) => {
+    configResolved: async config => {
       const pkgPath = lookupFile(config.root, ["package.json"]);
       resolvedCacheDir = cacheDir
         ? path.resolve(config.root, cacheDir)
         : pkgPath
-          ? path.join(path.dirname(pkgPath), "node_modules/.vite-plugin-zig-wasm")
+          ? path.join(
+              path.dirname(pkgPath),
+              "node_modules/.vite-plugin-zig-wasm",
+            )
           : path.join(config.root, ".vite-plugin-zig-wasm");
 
       resolvedZigCacheDir = zigCacheDir

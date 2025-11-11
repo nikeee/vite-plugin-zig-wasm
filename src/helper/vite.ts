@@ -23,7 +23,7 @@ export function normalizePath(id: string): string {
 const FS_PREFIX = "/@fs/";
 function fsPathFromId(id: string): string {
   const fsPath = normalizePath(
-    id.startsWith(FS_PREFIX) ? id.slice(FS_PREFIX.length) : id
+    id.startsWith(FS_PREFIX) ? id.slice(FS_PREFIX.length) : id,
   );
   return fsPath.startsWith("/") || fsPath.match(VOLUME_RE)
     ? fsPath
