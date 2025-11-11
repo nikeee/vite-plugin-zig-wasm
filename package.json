@@ -30,10 +30,10 @@
     "build": "tsdown",
     "test": "node --test",
     "coverage": "node --test --experimental-test-coverage",
-    "ci": "biome ci ./src",
+    "ci": "biome ci ./src ./examples/*/src",
     "docs": "typedoc",
-    "lint": "biome lint ./src",
-    "format": "biome check --write ./src",
+    "lint": "biome lint ./src ./examples/*/src",
+    "format": "biome check --write ./src ./examples/*/src",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

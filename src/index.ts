@@ -121,8 +121,10 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
           : undefined,
 
         `-femit-bin=${wasmPath}`,
-        "-O", releaseMode,
-        "--cache-dir", resolvedZigCacheDir,
+        "-O",
+        releaseMode,
+        "--cache-dir",
+        resolvedZigCacheDir,
         strip ? "--strip" : undefined,
         ...extraArgs,
         filePath,
@@ -184,9 +186,9 @@ export default init;`,
         ? path.resolve(config.root, cacheDir)
         : pkgPath
           ? path.join(
-            path.dirname(pkgPath),
-            "node_modules/.vite-plugin-zig-wasm",
-          )
+              path.dirname(pkgPath),
+              "node_modules/.vite-plugin-zig-wasm",
+            )
           : path.join(config.root, ".vite-plugin-zig-wasm");
 
       resolvedZigCacheDir = zigCacheDir
