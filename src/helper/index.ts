@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import { dirname, join } from "node:path";
 import semver from "semver";
 
-export * from "./vite";
+export * from "./vite.ts";
 
 export const indexOfAny = (s: string, charList: string) => {
   for (let i = 0; i < charList.length; i++) {

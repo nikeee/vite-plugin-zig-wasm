@@ -1,5 +1,5 @@
 import type { Plugin, ResolvedConfig } from "vite";
-import type { Options } from "./types";
+
 import { sync as spawnSync } from "cross-spawn";
 import * as path from "node:path";
 import * as os from "node:os";
@@ -13,7 +13,9 @@ import {
   ensureZigVersion,
   atLeastZigVersion,
   lookupFile,
-} from "./helper";
+} from "./helper/index.ts";
+
+import type { Options } from "./types.ts";
 
 const ID_SUFFIX = ".zig?init";
 
