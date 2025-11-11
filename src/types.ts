@@ -9,6 +9,9 @@ export type Options = {
    * Default run with ["-Oz", "--strig-debug"]
    */
   optimize?: boolean | string[];
+
+  cpu?: Partial<CpuOptions>;
+
   /**
    * Effected zig build command
    */
@@ -19,4 +22,20 @@ export type Options = {
     cacheDir?: string;
     extraArgs?: string[];
   };
+};
+
+// Supported features:
+// https://webassembly.org/features/#feature-note-13
+// zig targets | jq .cpus.wasm32
+export type CpuOptions = {
+  /** `baseline` */
+  baseline: boolean;
+  /** `simd128` */
+  simd128: boolean;
+  /** `sign_ext` */
+  signExt: boolean;
+  /** `nontrapping_fptoint` */
+  nonTrappingFpToInt: boolean;
+  /** `bulk_memory` */
+  bulkMemory: boolean;
 };

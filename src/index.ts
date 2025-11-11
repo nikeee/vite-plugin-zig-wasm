@@ -13,12 +13,40 @@ import {
   lookupFile,
 } from "./helper/index.ts";
 
-import type { Options } from "./types.ts";
+import type { CpuOptions, Options } from "./types.ts";
 
 const ID_SUFFIX = ".zig?init";
 
+function getMcpuOption(options: Partial<CpuOptions>): string {
+  const {
+    baseline = true,
+    bulkMemory = true,
+    nonTrappingFpToInt = true,
+    signExt = true,
+    simd128 = true,
+  } = options;
+
+  const o = [];
+  if (baseline) {
+    o.push("baseline");
+  }
+  if (simd128) {
+    o.push("simd128");
+  }
+  if (signExt) {
+    o.push("sign_ext");
+  }
+  if (nonTrappingFpToInt) {
+    o.push("nontrapping_fptoint");
+  }
+  if (bulkMemory) {
+    o.push("bulk_memory");
+  }
+  return o.join("+");
+}
+
 export default function zigWasmPlugin(options: Options = {}): Plugin {
-  const { cacheDir, zig = {}, optimize = false } = options;
+  const { cacheDir, zig = {}, optimize = false, cpu: cpuOptions } = options;
   const {
     releaseMode = "small",
     strip = false,
@@ -64,9 +92,11 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
 
       const args = [
         "build-lib",
-        "-dynamic",
         "-target",
         "wasm32-freestanding",
+        "-fno-entry",
+        "-rdynamic",
+        `-mcpu=${getMcpuOption(cpuOptions ?? {})}`, // TODO: Handle empty options
         `-femit-bin=${wasmPath}`,
         `-Drelease-${releaseMode}`,
         `--cache-dir`,
