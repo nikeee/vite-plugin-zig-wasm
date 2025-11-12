@@ -23,13 +23,17 @@ export type Options = {
   /**
    * Effected zig build command
    */
-  zig?: {
-    releaseMode?: "ReleaseSmall" | "ReleaseFast" | "Debug";
-    strip?: boolean;
-    binPath?: string;
-    cacheDir?: string;
-    extraArgs?: string[];
-  };
+  zig?: Partial<ZigBuildOptions>;
+};
+
+export type ZigBuildOptions = {
+  /**  @default "ReleaseFast" */
+  releaseMode: "ReleaseSmall" | "ReleaseFast" | "Debug";
+  /** @default false */
+  strip: boolean;
+  binPath: string;
+  cacheDir: string;
+  extraArgs: string[];
 };
 
 // Supported features:
