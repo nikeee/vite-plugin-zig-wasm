@@ -14,7 +14,6 @@ export function getEffectiveOptions(
   } = options;
 
   return {
-    optimize: options.optimize ?? false,
     cpu: {
       baseline: cpuOptions.baseline ?? true,
       simd128: cpuOptions.simd128 ?? true,

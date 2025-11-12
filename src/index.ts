@@ -34,16 +34,6 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   const optionsWithDefaults = getEffectiveOptions(options);
   const zigBinPath = which.sync(optionsWithDefaults.zig.binPath ?? "zig");
 
-  const wasmOptPath = optionsWithDefaults.optimize
-    ? which.sync("wasm-opt", { nothrow: true })
-    : false;
-
-  if (wasmOptPath === null) {
-    throw new Error(
-      "Can't enable wasm optimize option, wasm-opt command not found. Make sure `wasm-opt` in your $PATH.",
-    );
-  }
-
   const version = getZigVersion(zigBinPath);
   ensureZigVersion(version, ">= 0.15.0");
 
@@ -70,27 +60,6 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
 
       if (result.error) {
         throw result.error;
-      }
-
-      if (wasmOptPath) {
-        const optimizedFile = path.join(
-          resolvedOptions.cacheDir,
-          `wasm-optimized.${uniqWasmName}`,
-        );
-
-        const args = ["-o", optimizedFile];
-        const extraArgs = Array.isArray(optionsWithDefaults.optimize)
-          ? optionsWithDefaults.optimize
-          : ["-Oz", "--strip-debug"];
-
-        const result = spawnSync(
-          wasmOptPath,
-          [wasmPath, ...args, ...extraArgs],
-          { stdio: "inherit" },
-        );
-
-        if (result.error) throw result.error;
-        await fs.rename(optimizedFile, wasmPath);
       }
 
       if (useInternalInstance) {

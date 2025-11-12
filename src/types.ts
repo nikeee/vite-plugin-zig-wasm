@@ -3,12 +3,6 @@ export type Options = {
    * Temporary dir to store generated .wasm files and zig-cache during transform.
    */
   cacheDir?: string;
-  /**
-   * Enable optimize after building .wasm file using `wasm-opt`.
-   *
-   * Default run with ["-Oz", "--strig-debug"]
-   */
-  optimize?: boolean | string[];
 
   /**
    * CPU capabilities.

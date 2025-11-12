@@ -28,9 +28,9 @@ export default defineConfig(({ mode }) => {
     return {
         plugins: {
             zig({
-                // Enable this option require `wasm-opt` installed on your $PATH.
-                optimize: mode === 'production',
-                // Other options goes here
+                zig: {
+                  strip: mode === 'production',
+                },
             })
         }
     }
