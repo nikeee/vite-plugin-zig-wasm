@@ -37,10 +37,15 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   const version = getZigVersion(zigBinPath);
   ensureZigVersion(version, ">= 0.15.0");
 
-  let resolvedOptions: DeepRequired<Options>;
+  let resolvedOptions: DeepRequired<Options> | undefined;
   return {
     name: "vite-plugin-zig-wasm",
     async transform(_code, id, options) {
+      if (resolvedOptions === undefined) {
+        // configResolved has not been called, we're running in rolldown
+        return;
+      }
+
       if (!id.endsWith(compileSuffix) && !id.endsWith(instanciateSuffix)) {
         return;
       }
