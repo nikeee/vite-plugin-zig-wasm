@@ -59,9 +59,75 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
   let resolvedOptions: DeepRequired<Options> | undefined;
   return {
     name: "vite-plugin-zig-wasm",
+
+    resolveId(source, importer) {
+      if (resolvedOptions !== undefined) {
+        // configResolved has been called, we're running in vite. Transformation is done in transform
+        return;
+      }
+
+      console.log("resolve", source, importer);
+      if (
+        source.endsWith(compileSuffix) ||
+        source.endsWith(instanciateSuffix)
+      ) {
+        return {
+          id: path.join(path.dirname(importer), source),
+        };
+      }
+      return null;
+    },
+
+    async load(id, options) {
+      if (resolvedOptions !== undefined) {
+        // configResolved has been called, we're running in vite. Transformation is done in transform
+        return null;
+      }
+      console.log("load", id, options);
+
+      if (!id.endsWith(compileSuffix) && !id.endsWith(instanciateSuffix)) {
+        return;
+      }
+
+      const rollupOptions = {
+        ...optionsWithDefaults,
+        cacheDir: "/tmp",
+        zig: { ...optionsWithDefaults.zig, cacheDir: "/tmp" },
+      };
+
+      const useInternalInstance = id.endsWith(instanciateSuffix);
+      const wasmPath = buildZigFile(zigBinPath, id, rollupOptions);
+
+      const emittedFile = this.emitFile({
+        name: "zig.wasm",
+        originalFileName: id,
+        source: await fs.readFile(wasmPath),
+        type: "asset",
+      });
+
+      return useInternalInstance
+        ? `
+import * as fs from "node:fs/promises";
+export default async function init(instantiateOptions) {
+  const bytes = await fs.readFile(import.meta.resolve("./${this.getFileName(emittedFile)}"));
+  const result = await WebAssembly.instantiate(bytes, instantiateOptions);
+  return result.instance;
+}
+      `
+        : `
+import * as fs from "node:fs/promises";
+
+export default async function compileModule() {
+  const bytes = await fs.readFile(import.meta.resolve("./${this.getFileName(emittedFile)}"));
+  return await WebAssembly.compile(bytes);
+}
+  `;
+    },
+
     async transform(_code, id, options) {
+      console.log("transform", id);
       if (resolvedOptions === undefined) {
-        // configResolved has not been called, we're running in rolldown
+        // configResolved has not been called, we're running in rolldown (compilation handled in load)
         return;
       }
 
