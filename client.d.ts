@@ -5,8 +5,6 @@ declare module "*.zig?init" {
   export default instantiate;
 }
 declare module "*.zig?compile" {
-  export const compileModule: (
-    options: WebAssembly.Imports
-  ) => ReturnType<typeof WebAssembly.compile>;
+  export const compileModule: () => ReturnType<typeof WebAssembly.compile>;
   export default compileModule;
 }
