@@ -30,6 +30,25 @@ function getZigVersion(binPath: string) {
   return versionCmd.stdout.toString().trim();
 }
 
+function buildZigFile(
+  compilerPath: string,
+  sourceFilePath: string,
+  options: DeepRequired<Options>,
+): string {
+  const filePath = fsPathFromUrl(sourceFilePath);
+  const hash = getHash(cleanUrl(filePath));
+  const uniqWasmName = `${path.basename(filePath, ".zig")}.${hash}.wasm`;
+  const wasmPath = path.join(options.cacheDir, uniqWasmName);
+
+  const args = buildArguments(options, filePath, wasmPath);
+
+  const result = spawnSync(compilerPath, args, { stdio: "inherit" });
+  if (result.error) {
+    throw result.error;
+  }
+  return wasmPath;
+}
+
 export default function zigWasmPlugin(options: Options = {}): Plugin {
   const optionsWithDefaults = getEffectiveOptions(options);
   const zigBinPath = which.sync(optionsWithDefaults.zig.binPath ?? "zig");
@@ -52,20 +71,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
 
       const useInternalInstance = id.endsWith(instanciateSuffix);
 
-      const filePath = fsPathFromUrl(id);
-
-      const hash = getHash(cleanUrl(id));
-      const uniqWasmName = `${path.basename(filePath, ".zig")}.${hash}.wasm`;
-      const wasmPath = path.join(resolvedOptions.cacheDir, uniqWasmName);
-
-      const args = buildArguments(resolvedOptions, filePath, wasmPath);
-      this.debug(`Building zig (using v${version}): ${args.join(" ")}`);
-
-      const result = spawnSync(zigBinPath, args, { stdio: "inherit" });
-
-      if (result.error) {
-        throw result.error;
-      }
+      const wasmPath = buildZigFile(zigBinPath, id, resolvedOptions);
 
       return {
         code: getLoaderSource(
