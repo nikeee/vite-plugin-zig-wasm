@@ -10,32 +10,22 @@ import {
   getHash,
   normalizePath,
   ensureZigVersion,
-  lookupFile,
 } from "./helper/index.ts";
 
 import type { Options } from "./types.ts";
+import {
+  buildArguments,
+  getEffectiveOptions,
+  type DeepRequired,
+} from "./options.ts";
 
 const compileSuffix = ".zig?compile";
 const instanciateSuffix = ".zig?init";
 
 export default function zigWasmPlugin(options: Options = {}): Plugin {
-  const {
-    cacheDir,
-    zig = {},
-    optimize = false,
-    cpu: cpuOptions,
-    memory: memoryOptions = {},
-  } = options;
+  const optionsWithDefaults = getEffectiveOptions(options);
 
-  const {
-    releaseMode = "ReleaseFast",
-    strip = false,
-    extraArgs = [],
-    binPath,
-    cacheDir: zigCacheDir,
-  } = zig;
-
-  const zigBinPath = which.sync(binPath ?? "zig");
+  const zigBinPath = which.sync(optionsWithDefaults.zig.binPath ?? "zig");
   const versionCmd = spawnSync(zigBinPath, ["version"]);
   if (versionCmd.error) {
     throw new Error(`failed when execute "${zigBinPath} version" command.`);
@@ -43,7 +33,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
 
   const version = versionCmd.stdout.toString();
 
-  const wasmOptPath = optimize
+  const wasmOptPath = optionsWithDefaults.optimize
     ? which.sync("wasm-opt", { nothrow: true })
     : false;
 
@@ -55,8 +45,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
 
   ensureZigVersion(version, ">= 0.9.0");
 
-  let resolvedCacheDir: string;
-  let resolvedZigCacheDir: string;
+  let resolvedOptions: DeepRequired<Options>;
   return {
     name: "vite-plugin-zig-wasm",
     async transform(_code, id, options) {
@@ -70,50 +59,12 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
 
       const hash = getHash(cleanUrl(id));
       const uniqWasmName = `${path.basename(filePath, ".zig")}.${hash}.wasm`;
-      const wasmPath = path.join(resolvedCacheDir, uniqWasmName);
+      const wasmPath = path.join(resolvedOptions.cacheDir, uniqWasmName);
 
-      const cpu = getMcpuOption(cpuOptions ?? {});
+      const args = buildArguments(resolvedOptions, filePath, wasmPath);
+      this.debug(`Building zig (using v${version}): ${args.join(" ")}`);
 
-      const args = [
-        "build-exe",
-        "-target",
-        "wasm32-freestanding",
-        "-fno-entry",
-        "-rdynamic",
-
-        cpu ? `-mcpu=${cpu}` : undefined,
-
-        memoryOptions.importMemory ? "--import-memory" : undefined,
-
-        memoryOptions.globalBase
-          ? `--global-base=${memoryOptions.globalBase}`
-          : undefined,
-        memoryOptions.initialMemory
-          ? `--initial-memory=${memoryOptions.initialMemory}`
-          : undefined,
-        memoryOptions.maxMemory
-          ? `--max-memory=${memoryOptions.maxMemory}`
-          : undefined,
-
-        `-femit-bin=${wasmPath}`,
-        "-O",
-        releaseMode,
-        "--cache-dir",
-        resolvedZigCacheDir,
-        strip ? "--strip" : undefined,
-        ...extraArgs,
-        filePath,
-      ];
-
-      const effectiveArgs = args
-        .filter(a => typeof a !== "undefined")
-        .filter(a => !!a);
-
-      this.debug(
-        `Building zig (using v${version}): ${effectiveArgs.join(" ")}`,
-      );
-
-      const result = spawnSync(zigBinPath, effectiveArgs, { stdio: "inherit" });
+      const result = spawnSync(zigBinPath, args, { stdio: "inherit" });
 
       if (result.error) {
         throw result.error;
@@ -121,13 +72,13 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
 
       if (wasmOptPath) {
         const optimizedFile = path.join(
-          resolvedCacheDir,
+          resolvedOptions.cacheDir,
           `wasm-optimized.${uniqWasmName}`,
         );
 
         const args = ["-o", optimizedFile];
-        const extraArgs = Array.isArray(optimize)
-          ? optimize
+        const extraArgs = Array.isArray(optionsWithDefaults.optimize)
+          ? optionsWithDefaults.optimize
           : ["-Oz", "--strip-debug"];
 
         const result = spawnSync(
@@ -177,21 +128,22 @@ export default async function compileModule() {
     },
 
     configResolved: async config => {
-      const pkgPath = lookupFile(config.root, ["package.json"]);
-      resolvedCacheDir = cacheDir
-        ? path.resolve(config.root, cacheDir)
-        : pkgPath
-          ? path.join(
-              path.dirname(pkgPath),
-              "node_modules/.vite-plugin-zig-wasm",
-            )
-          : path.join(config.root, ".vite-plugin-zig-wasm");
+      const resolvedCacheDir = options.cacheDir
+        ? path.resolve(config.root, options.cacheDir)
+        : path.join(config.root, "node_modules/.vite-plugin-zig-wasm");
 
-      resolvedZigCacheDir = zigCacheDir
-        ? path.join(config.root, zigCacheDir)
+      const resolvedZigCacheDir = options.zig?.cacheDir
+        ? path.join(config.root, options.zig?.cacheDir)
         : path.join(resolvedCacheDir, "zig-cache");
 
+      await fs.mkdir(resolvedCacheDir, { recursive: true });
       await fs.mkdir(resolvedZigCacheDir, { recursive: true });
+
+      resolvedOptions = {
+        ...optionsWithDefaults,
+        cacheDir: resolvedCacheDir,
+        zig: { ...optionsWithDefaults.zig, cacheDir: resolvedZigCacheDir },
+      };
     },
   };
 }

@@ -1,8 +1,8 @@
 export type Options = {
   /**
-   * Temporary dir to store generated .wasm files and zig-cache during transform
+   * Temporary dir to store generated .wasm files and zig-cache during transform.
    */
-  cacheDir?: string | false;
+  cacheDir?: string;
   /**
    * Enable optimize after building .wasm file using `wasm-opt`.
    *
@@ -75,17 +75,17 @@ export type MemoryOptions = {
   importMemory: boolean;
   /**
    * `--initial-memory`
-   * @default undefined
+   * @default null
    */
-  initialMemory: number | undefined;
+  initialMemory: number | null;
   /**
    * `--max-memory`
-   * @default undefined
+   * @default null
    */
-  maxMemory: number | undefined;
+  maxMemory: number | null;
   /**
    * `--global-base`
-   * @default undefined
+   * @default null
    */
-  globalBase: number | undefined;
+  globalBase: number | null;
 };
