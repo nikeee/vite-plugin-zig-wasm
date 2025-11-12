@@ -43,7 +43,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
     );
   }
 
-  ensureZigVersion(version, ">= 0.9.0");
+  ensureZigVersion(version, ">= 0.15.0");
 
   let resolvedOptions: DeepRequired<Options>;
   return {
