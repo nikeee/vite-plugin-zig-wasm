@@ -1,10 +1,10 @@
 import { defineConfig } from "vite";
 
 // Use
-// import zigWasmPlugin from "vite-plugin-zig-wasm"
+// import zig from "vite-plugin-zig-wasm"
 // here
-import zigWasmPlugin from "../../src/index.ts";
+import zig from "../../src/index.ts";
 
 export default defineConfig({
-  plugins: [zigWasmPlugin()],
+  plugins: [zig()],
 });
