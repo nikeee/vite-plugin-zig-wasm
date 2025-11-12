@@ -73,15 +73,15 @@ export type MemoryOptions = {
    * `--initial-memory`
    * @default undefined
    */
-  initialMemory: number;
+  initialMemory: number | undefined;
   /**
    * `--max-memory`
    * @default undefined
    */
-  maxMemory: number;
+  maxMemory: number | undefined;
   /**
    * `--global-base`
    * @default undefined
    */
-  globalBase: number;
+  globalBase: number | undefined;
 };
