@@ -22,16 +22,17 @@ import {
 const compileSuffix = ".zig?compile";
 const instanciateSuffix = ".zig?init";
 
+function getZigVersion(binPath: string) {
+  const versionCmd = spawnSync(binPath, ["version"]);
+  if (versionCmd.error) {
+    throw new Error(`Failed when execute "${binPath} version" command.`);
+  }
+  return versionCmd.stdout.toString().trim();
+}
+
 export default function zigWasmPlugin(options: Options = {}): Plugin {
   const optionsWithDefaults = getEffectiveOptions(options);
-
   const zigBinPath = which.sync(optionsWithDefaults.zig.binPath ?? "zig");
-  const versionCmd = spawnSync(zigBinPath, ["version"]);
-  if (versionCmd.error) {
-    throw new Error(`failed when execute "${zigBinPath} version" command.`);
-  }
-
-  const version = versionCmd.stdout.toString();
 
   const wasmOptPath = optionsWithDefaults.optimize
     ? which.sync("wasm-opt", { nothrow: true })
@@ -43,6 +44,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
     );
   }
 
+  const version = getZigVersion(zigBinPath);
   ensureZigVersion(version, ">= 0.15.0");
 
   let resolvedOptions: DeepRequired<Options>;
