@@ -67,38 +67,12 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         throw result.error;
       }
 
-      if (useInternalInstance) {
-        return {
-          code: options?.ssr
-            ? `
-import * as fs from "node:fs/promises";
-
-export default async function init(instantiateOptions) {
-  const bytes = await fs.readFile('${normalizePath(wasmPath)}');
-  const result = await WebAssembly.instantiate(bytes, instantiateOptions);
-  return result.instance;
-}`
-            : `
-import init from '${normalizePath(wasmPath)}?init';
-export default init;`,
-          map: { mappings: "" },
-        };
-      }
-
       return {
-        code: options?.ssr
-          ? `
-import * as fs from "node:fs/promises";
-
-export default async function compileModule() {
-  const bytes = await fs.readFile("${normalizePath(wasmPath)}");
-  return await WebAssembly.compile(bytes);
-}`
-          : `
-import moduleUrl from "${normalizePath(wasmPath)}?url";
-export default async function compileModule() {
-  return await WebAssembly.compileStreaming(fetch(moduleUrl));
-}`,
+        code: getLoaderSource(
+          wasmPath,
+          options?.ssr ?? false,
+          useInternalInstance,
+        ),
         map: { mappings: "" },
       };
     },
@@ -122,4 +96,39 @@ export default async function compileModule() {
       };
     },
   };
+}
+
+function getLoaderSource(
+  wasmPath: string,
+  ssr: boolean,
+  useInternalInstance: boolean,
+) {
+  if (useInternalInstance) {
+    return ssr
+      ? `
+import * as fs from "node:fs/promises";
+
+export default async function init(instantiateOptions) {
+  const bytes = await fs.readFile('${normalizePath(wasmPath)}');
+  const result = await WebAssembly.instantiate(bytes, instantiateOptions);
+  return result.instance;
+}`
+      : `
+import init from '${normalizePath(wasmPath)}?init';
+export default init;`;
+  }
+
+  return ssr
+    ? `
+import * as fs from "node:fs/promises";
+
+export default async function compileModule() {
+  const bytes = await fs.readFile("${normalizePath(wasmPath)}");
+  return await WebAssembly.compile(bytes);
+}`
+    : `
+import moduleUrl from "${normalizePath(wasmPath)}?url";
+export default async function compileModule() {
+  return await WebAssembly.compileStreaming(fetch(moduleUrl));
+}`;
 }
