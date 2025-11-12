@@ -3,7 +3,9 @@
     "module": "es2022",
     "target": "esnext",
     "moduleResolution": "bundler",
-    "types": [],
+    "types": [
+       "../../client", // use "vite-plugin-zig-wasm/client" in your app
+    ],
     "noEmit": true,
 
     "allowImportingTsExtensions": true,
