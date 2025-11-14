@@ -108,7 +108,7 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
       const wasmPath = buildZigFile(zigBinPath, id, rollupOptions);
 
       const emittedFile = this.emitFile({
-        name: fileName,
+        name: `${fileName}.wasm`,
         originalFileName: fileName,
         source: await fs.readFile(wasmPath),
         type: "asset",
