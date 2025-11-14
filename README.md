@@ -7,6 +7,8 @@
 # vite-plugin-zig-wasm
 Fork of [utherpally/vite-wasm-zig](https://github.com/utherpally/vite-wasm-zig).
 
+Also works with rolldown/tsdown. [See below](#tsdown).
+
 Why use this instead of one of the other solutions?
 - More compiler options
 - Compatible with latest Zig version
@@ -75,8 +77,6 @@ console.log(instance.exports.add(1, 10));
 export default instance.exports;
 ```
 
-
-
 ## With Typescript
 Add to `tsconfig.json`:
 ```json
@@ -86,3 +86,6 @@ Add to `tsconfig.json`:
   }
 }
 ```
+
+## tsdown
+See [examples/tsdown-demo](./examples/tsdown-demo)
