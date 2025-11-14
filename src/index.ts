@@ -121,7 +121,6 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
     },
 
     async transform(_code, id, options) {
-      console.log("transform", id);
       if (resolvedOptions === undefined) {
         // configResolved has not been called, we're running in rolldown (compilation handled in load)
         return;
