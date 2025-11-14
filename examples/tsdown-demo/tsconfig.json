@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "target": "esnext",
+    "moduleResolution": "bundler",
+    "types": [
+       "../../client", // use "vite-plugin-zig-wasm/client" in your app
+    ],
+    "noEmit": true,
+
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+  }
+}

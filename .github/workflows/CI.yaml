@@ -30,6 +30,8 @@ jobs:
       - run: npm run ci
       - run: npm ci && npm run build
         working-directory: examples/vite-demo
+      - run: npm ci && npm run build
+        working-directory: examples/tsdown-demo
 
       # TODO
       # - run: npm test --silent | tee results.tap

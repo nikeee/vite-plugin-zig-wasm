@@ -18,6 +18,15 @@ updates:
         update-types:
           - "patch"
 
+  - package-ecosystem: "npm"
+    directory: "/examples/tsdown-demo"
+    schedule:
+      interval: "weekly"
+    groups:
+      patch-dependencies:
+        update-types:
+          - "patch"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
