@@ -1,5 +1,6 @@
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
+import * as os from "node:os";
 
 import type { Plugin } from "vite";
 import { sync as spawnSync } from "cross-spawn";
@@ -66,6 +67,10 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         return;
       }
 
+      if (!importer) {
+        return;
+      }
+
       if (
         source.endsWith(compileSuffix) ||
         source.endsWith(instanciateSuffix)
@@ -87,18 +92,24 @@ export default function zigWasmPlugin(options: Options = {}): Plugin {
         return;
       }
 
+      const cacheDir =
+        options.cacheDir ??
+        (await fs.mkdtemp(path.join(os.tmpdir(), "vite-plugin-zig-wasm-")));
+
       const rollupOptions = {
         ...optionsWithDefaults,
-        cacheDir: "/tmp",
-        zig: { ...optionsWithDefaults.zig, cacheDir: "/tmp" },
+        cacheDir,
+        zig: { ...optionsWithDefaults.zig, cacheDir },
       };
+
+      const fileName = path.basename(id.substring(0, id.indexOf("?")));
 
       const useInternalInstance = id.endsWith(instanciateSuffix);
       const wasmPath = buildZigFile(zigBinPath, id, rollupOptions);
 
       const emittedFile = this.emitFile({
-        name: "zig.wasm",
-        originalFileName: id,
+        name: fileName,
+        originalFileName: fileName,
         source: await fs.readFile(wasmPath),
         type: "asset",
       });
