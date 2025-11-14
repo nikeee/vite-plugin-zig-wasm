@@ -50,6 +50,8 @@ function buildZigFile(
   return wasmPath;
 }
 
+export type * from "./types.ts";
+
 export default function zigWasmPlugin(options: Options = {}): Plugin {
   const optionsWithDefaults = getEffectiveOptions(options);
   const zigBinPath = which.sync(optionsWithDefaults.zig.binPath ?? "zig");
