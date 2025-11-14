@@ -30,7 +30,7 @@ jobs:
       - run: npm run ci
       - run: npm ci && npm run build
         working-directory: examples/vite-demo
-      - run: npm ci && npm run build && node dist/index.mjs
+      - run: npm ci && npm run build && cat dist/index.mjs && node dist/index.mjs
         working-directory: examples/tsdown-demo
 
       # TODO
