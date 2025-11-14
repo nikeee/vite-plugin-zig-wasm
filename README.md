@@ -7,6 +7,8 @@
 # vite-plugin-zig-wasm
 Fork of [utherpally/vite-wasm-zig](https://github.com/utherpally/vite-wasm-zig).
 
+If you are using tsdown or rolldown, try [rolldown-plugin-zig-wasm](https://github.com/nikeee/rolldown-plugin-zig-wasm).
+
 Why use this instead of one of the other solutions?
 - More compiler options
 - Compatible with latest Zig version
