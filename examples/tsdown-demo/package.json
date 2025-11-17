@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@ziglang/cli": "^0.0.14",
-    "tsdown": "^0.16.3",
+    "tsdown": "^0.16.5",
     "typescript": "^5.9.3"
   }
 }
