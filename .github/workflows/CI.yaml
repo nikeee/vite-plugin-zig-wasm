@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x, 24.x, 25.x]
-        os: [ubuntu-latest, macos-latest] # no windows because biome bugs on windows
+        os: [ubuntu-slim, macos-latest] # no windows because biome bugs on windows
 
     steps:
       - uses: actions/checkout@v5
@@ -44,7 +44,7 @@ jobs:
   docs-build:
     if: ${{ github.event_name != 'pull_request' }}
     name: Build Docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
 
     needs: test
 
