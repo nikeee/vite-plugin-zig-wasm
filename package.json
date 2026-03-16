@@ -38,19 +38,19 @@
   },
   "dependencies": {
     "cross-spawn": "^7.0.6",
-    "semver": "^7.7.3",
-    "which": "^6.0.0"
+    "semver": "^7.7.4",
+    "which": "^6.0.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.12",
+    "@biomejs/biome": "^2.4.7",
     "@types/cross-spawn": "^6.0.6",
-    "@types/node": "^25.0.10",
+    "@types/node": "^25.5.0",
     "@types/semver": "^7.7.1",
     "@types/which": "^3.0.4",
-    "expect": "^30.2.0",
-    "lefthook": "^2.0.15",
-    "tsdown": "^0.20.1",
-    "typedoc": "^0.28.16",
+    "expect": "^30.3.0",
+    "lefthook": "^2.1.4",
+    "tsdown": "^0.21.4",
+    "typedoc": "^0.28.17",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
