@@ -51,7 +51,7 @@
     "lefthook": "^2.1.17",
     "tsdown": "^0.21.10",
     "typedoc": "^0.28.20",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "peerDependencies": {
     "vite": "^8.3.2"
